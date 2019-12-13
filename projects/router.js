@@ -90,5 +90,30 @@ router.get("/", (req, res) => {
         });
     });
   });
+
+  router.get('/:id/resources', (req, res) => { 
+    const { id } = req.params;
+    console.log(id)
+    Projects.findResource(id)
+    .then(resources => {
+      res.status(200).json(resources)
+    })
+    .catch((error) => {
+      console.log(error)
+      res.status(500).json({message: 'Could not get that project ID'})
+    })
+  })
+
+  router.post('/:id/resources', (req, res) => {
+    Projects.insertResource(req.params.id, req.body)
+      .then(resource => {
+        res.status(201).json(resource)
+      })
+      .catch((error) => {
+        console.log(error)
+        res.status(500).json({message: 'Could not create that resource'})
+      })
+  })
+
   
 module.exports = router

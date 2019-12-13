@@ -9,7 +9,10 @@ module.exports = {
     getById,
     add,
     getTasks,
-    addTask
+    addTask,
+    findResource,
+    insertResource,
+    findResourceById
   };
   
   function get() {
@@ -40,4 +43,28 @@ module.exports = {
     return db("tasks")
       .where({ project_id: id })
       .insert(task);
+  } 
+  
+  function findResource(projectId) {
+    return db('resources')
+      .join('projects_resources', 'resources.id', 'projects_resources.resource_id')
+      .where({'projects_resources.project_id': projectId})
+  }
+  
+  function findResourceById(id) {
+    return db('resources')
+      .where(({id}))
+  }
+  
+  function insertResource(projectId, resource) {
+    return db('resources').insert(resource)
+      .then(([id]) => {
+        return db('projects_resources').insert({
+          project_id: projectId,
+          resource_id: id,
+        })
+      })
+      .catch(() => {
+        return findResourceById(id)
+      })
   } 
